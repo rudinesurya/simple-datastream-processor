@@ -6,7 +6,7 @@ import org.apache.flink.walkthrough.common.sink.AlertSink;
 import org.apache.flink.walkthrough.common.source.TransactionSource;
 
 
-public class Pipeline {
+public class FraudDetection {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
