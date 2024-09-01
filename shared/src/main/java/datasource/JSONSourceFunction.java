@@ -6,7 +6,6 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.streaming.api.watermark.Watermark;
 
 import java.io.*;
-import java.time.Instant;
 
 public class JSONSourceFunction implements SourceFunction<JsonNode> {
     private volatile boolean isRunning = true;
@@ -27,8 +26,7 @@ public class JSONSourceFunction implements SourceFunction<JsonNode> {
             while (isRunning && (jsonString = reader.readLine()) != null) {
                 // Parse each line as a JSON object
                 JsonNode jsonNode = objectMapper.readTree(jsonString);
-                Instant timestamp = Instant.parse(jsonNode.get("timestamp").asText());
-                long eventTime = timestamp.toEpochMilli();
+                long eventTime = jsonNode.get("timestamp").asLong();
 
                 ctx.collectWithTimestamp(jsonNode, eventTime);
                 ctx.emitWatermark(new Watermark(eventTime - 1));

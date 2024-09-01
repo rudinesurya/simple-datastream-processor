@@ -11,6 +11,7 @@
     <modules>
         <module>SimplePipeline</module>
         <module>shared</module>
+        <module>FraudDetectionPipeline</module>
     </modules>
 
     <properties>

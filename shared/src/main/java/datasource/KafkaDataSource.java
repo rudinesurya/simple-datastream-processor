@@ -13,7 +13,6 @@ import org.apache.flink.streaming.api.functions.source.RichSourceFunction;
 import org.apache.flink.streaming.api.watermark.Watermark;
 
 import java.time.Duration;
-import java.time.Instant;
 
 public class KafkaDataSource extends RichSourceFunction<JsonNode> {
     private final String brokers;
@@ -57,8 +56,7 @@ public class KafkaDataSource extends RichSourceFunction<JsonNode> {
                 // Parse JSON string to JsonNode
                 JsonNode jsonNode = objectMapper.readTree(jsonString);
                 synchronized (ctx.getCheckpointLock()) {
-                    Instant timestamp = Instant.parse(jsonNode.get("timestamp").asText());
-                    long eventTime = timestamp.toEpochMilli();
+                    long eventTime = jsonNode.get("timestamp").asLong();
 
                     ctx.collectWithTimestamp(jsonNode, eventTime);
                     ctx.emitWatermark(new Watermark(eventTime - allowedLatenessInMinutes * 60 * 1000));

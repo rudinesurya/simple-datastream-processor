@@ -10,7 +10,7 @@ public class SimpleJob {
         String topic = "test";
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        DataStream<JsonNode> jsonStream = env.addSource(new KafkaDataSource(brokers, topic, 5L));
+        final DataStream<JsonNode> jsonStream = env.addSource(new KafkaDataSource(brokers, topic, 5L));
 
         jsonStream.print();
 
