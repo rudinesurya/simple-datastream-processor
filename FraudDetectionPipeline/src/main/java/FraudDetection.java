@@ -14,6 +14,8 @@ public class FraudDetection {
                 .addSource(new TransactionSource())
                 .name("transactions");
 
+        transactions.print();
+
         DataStream<Alert> alerts = transactions
                 .keyBy(Transaction::getAccountId)
                 .process(new FraudDetector())
