@@ -24,10 +24,23 @@ public class JSONSourceFunction<T> extends RichSourceFunction<T> {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String line;
-            while (isRunning && (line = reader.readLine()) != null) {
-                T element = deserializationSchema.deserialize(line.getBytes(StandardCharsets.UTF_8));
-                ctx.collect(element);
+            while (isRunning) { // Check isRunning in the loop condition
+                if ((line = reader.readLine()) == null) {
+                    break; // Exit loop if the end of the stream is reached
+                }
+                try {
+                    T element = deserializationSchema.deserialize(line.getBytes(StandardCharsets.UTF_8));
+                    ctx.collect(element);
+                } catch (Exception e) {
+                    // Log deserialization errors, if needed
+                    System.err.println("Failed to deserialize line: " + line);
+                    e.printStackTrace();
+                }
             }
+        } catch (Exception e) {
+            // Log any other errors that may occur during reading
+            System.err.println("Error reading file: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
