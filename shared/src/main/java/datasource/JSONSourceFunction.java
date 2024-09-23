@@ -1,35 +1,32 @@
 package datasource;
 
-import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode;
-import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.flink.streaming.api.functions.source.SourceFunction;
-import org.apache.flink.streaming.api.watermark.Watermark;
-
+import org.apache.flink.api.common.serialization.DeserializationSchema;
+import org.apache.flink.streaming.api.functions.source.RichSourceFunction;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
-public class JSONSourceFunction implements SourceFunction<JsonNode> {
+public class JSONSourceFunction<T> extends RichSourceFunction<T> {
+    private final String filePath;
+    private final DeserializationSchema<T> deserializationSchema;
     private volatile boolean isRunning = true;
-    private ObjectMapper objectMapper = new ObjectMapper();
-    private final String resourcePath;
 
-    public JSONSourceFunction(String resourcePath) {
-        this.resourcePath = resourcePath;
+    public JSONSourceFunction(String filePath, DeserializationSchema<T> deserializationSchema) {
+        this.filePath = filePath;
+        this.deserializationSchema = deserializationSchema;
     }
 
     @Override
-    public void run(SourceContext<JsonNode> ctx) throws Exception {
-        // Load the file from resources using getClass().getResourceAsStream()
-        try (InputStream inputStream = getClass().getResourceAsStream(resourcePath);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+    public void run(SourceContext<T> ctx) throws Exception {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filePath);
+        if (inputStream == null) {
+            throw new IllegalArgumentException("File not found: " + filePath);
+        }
 
-            String jsonString;
-            while (isRunning && (jsonString = reader.readLine()) != null) {
-                // Parse each line as a JSON object
-                JsonNode jsonNode = objectMapper.readTree(jsonString);
-                long eventTime = jsonNode.get("timestamp").asLong();
-
-                ctx.collectWithTimestamp(jsonNode, eventTime);
-                ctx.emitWatermark(new Watermark(eventTime - 1));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            String line;
+            while (isRunning && (line = reader.readLine()) != null) {
+                T element = deserializationSchema.deserialize(line.getBytes(StandardCharsets.UTF_8));
+                ctx.collect(element);
             }
         }
     }
