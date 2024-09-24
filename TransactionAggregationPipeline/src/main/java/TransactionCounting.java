@@ -1,5 +1,6 @@
 import datasource.JSONSourceFunction;
 import deserializationSchema.TransactionDeserializationSchema;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -8,10 +9,9 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.walkthrough.common.entity.Transaction;
-
 import java.time.Duration;
 
-
+@Slf4j
 public class TransactionCounting {
     public static void main(String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();

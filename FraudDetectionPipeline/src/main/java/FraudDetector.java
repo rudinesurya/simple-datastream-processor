@@ -1,3 +1,4 @@
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.common.typeinfo.Types;
@@ -7,7 +8,7 @@ import org.apache.flink.util.Collector;
 import org.apache.flink.walkthrough.common.entity.Alert;
 import org.apache.flink.walkthrough.common.entity.Transaction;
 
-
+@Slf4j
 public class FraudDetector extends KeyedProcessFunction<Long, Transaction, Alert> {
     private static final long serialVersionUID = 1L;
     private static final double SMALL_AMOUNT = 1.00;

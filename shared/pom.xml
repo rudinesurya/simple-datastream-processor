@@ -17,39 +17,6 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-<dependencies>
-    <dependency>
-        <groupId>org.apache.flink</groupId>
-        <artifactId>flink-walkthrough-common</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.flink</groupId>
-        <artifactId>flink-streaming-java</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.flink</groupId>
-        <artifactId>flink-clients</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.flink</groupId>
-        <artifactId>flink-connector-kafka</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-slf4j-impl</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-api</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-core</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-</dependencies>
     <build>
         <plugins>
             <plugin>
@@ -62,6 +29,57 @@
             </plugin>
         </plugins>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-walkthrough-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-clients</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-kafka</artifactId>
+        </dependency>
+        <!-- Add Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
+        <!-- Add SLF4J API -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
 
+        <!-- Add SLF4J binding for Logback (or another logger implementation) -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <!-- Add logging framework, to produce console output when running in the IDE. -->
+        <!-- These dependencies are excluded from the application JAR by default. -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
 </project>

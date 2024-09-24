@@ -1,12 +1,13 @@
 package deserializationSchema;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 
+@Slf4j
 public class JsonNodeDeserializationSchema implements DeserializationSchema<JsonNode> {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 

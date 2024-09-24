@@ -1,10 +1,12 @@
 package datasource;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.streaming.api.functions.source.RichSourceFunction;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+@Slf4j
 public class JSONSourceFunction<T> extends RichSourceFunction<T> {
     private final String filePath;
     private final DeserializationSchema<T> deserializationSchema;
@@ -33,13 +35,13 @@ public class JSONSourceFunction<T> extends RichSourceFunction<T> {
                     ctx.collect(element);
                 } catch (Exception e) {
                     // Log deserialization errors, if needed
-                    System.err.println("Failed to deserialize line: " + line);
+                    log.error("Failed to deserialize line: " + line);
                     e.printStackTrace();
                 }
             }
         } catch (Exception e) {
             // Log any other errors that may occur during reading
-            System.err.println("Error reading file: " + e.getMessage());
+            log.error("Error reading file: " + e.getMessage());
             e.printStackTrace();
         }
     }
