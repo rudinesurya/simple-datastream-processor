@@ -1,11 +1,13 @@
-import datasource.KafkaSourceFunction;
 import deserializationSchema.JsonNodeDeserializationSchema;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.time.Time;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.connector.kafka.source.KafkaSource;
+import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 
 
 public class StreamFromKafkaTopicWithCheckpointing {
@@ -28,9 +30,21 @@ public class StreamFromKafkaTopicWithCheckpointing {
                 Time.of(10, java.util.concurrent.TimeUnit.SECONDS) // Delay between attempts
         ));
 
+        final var kafkaSource = KafkaSource.<JsonNode>builder()
+                .setBootstrapServers("localhost:9092")
+                .setTopics("test-2")
+                .setGroupId("my-group")
+//                .setStartingOffsets(OffsetsInitializer.latest())
+                .setStartingOffsets(OffsetsInitializer.committedOffsets(OffsetResetStrategy.LATEST))
+                .setValueOnlyDeserializer(new JsonNodeDeserializationSchema())
+                .build();
 
-        final var jsonSource = new KafkaSourceFunction<>("test", "localhost:9092", "my-group", new JsonNodeDeserializationSchema());
-        final var jsonStream = env.addSource(jsonSource, TypeInformation.of(JsonNode.class));
+        final var jsonStream = env.fromSource(
+                kafkaSource,
+                WatermarkStrategy.noWatermarks(),
+                "KafkaSource"
+        );
+
         jsonStream.print();
 
         env.execute("Kafka Source Example");

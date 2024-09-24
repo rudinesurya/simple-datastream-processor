@@ -15,7 +15,6 @@ import java.time.Duration;
 public class TransactionCounting {
     public static void main(String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-//        final var jsonSource = new KafkaSourceFunction<>("test", "localhost:9092", "my-group", new TransactionDeserializationSchema());
         final var jsonSource = new JSONSourceFunction<>("test.json", new TransactionDeserializationSchema());
         final var transactions = env.addSource(jsonSource, TypeInformation.of(Transaction.class))
                 .assignTimestampsAndWatermarks(
